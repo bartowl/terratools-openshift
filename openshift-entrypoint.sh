@@ -26,4 +26,4 @@ if ! whoami &> /dev/null; then
   [ -f "$HOME/.sshd/sshd_rsa_key" ] || ssh-keygen -t rsa -f "$HOME/.sshd/sshd_rsa_key" -N ''
 
 fi
-exec "$@"
+exec /usr/sbin/sshd -D -d
