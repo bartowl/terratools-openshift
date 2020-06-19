@@ -15,4 +15,4 @@ VOLUME /home/terraform
 
 EXPOSE 2222/tcp
 
-CMD /usr/sbin/sshd
+CMD ["/usr/sbin/sshd", "-D", "-d"]
