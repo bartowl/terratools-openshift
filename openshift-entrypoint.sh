@@ -7,8 +7,10 @@ if ! whoami &> /dev/null; then
     sed "s/:12345:/:$(id -u):/" /etc/passwd > /tmp/passwd
     cat /tmp/passwd > /etc/passwd
     rm /tmp/passwd
+    sed "s/:12345:/:$(id -u):/" /etc/group > /tmp/group
+    cat /tmp/group > /etc/group
+    rm /tmp/group
     [ "$HOME" = "/" ] && HOME="/home/terraform" && export HOME
-    chown $(id -u) /home/terraform && chmod 755 /home/terraform
   fi
   if [ -w /etc/shadow ]; then
     grep -v terraform /etc/shadow > /tmp/shadow
