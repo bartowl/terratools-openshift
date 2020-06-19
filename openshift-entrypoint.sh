@@ -8,15 +8,17 @@ if ! whoami &> /dev/null; then
     cat /tmp/passwd > /etc/passwd
     rm /tmp/passwd
     [ "$HOME" = "/" ] && HOME="/home/terraform" && export HOME
+    chown $(id -u) /home/terraform && chmod 755 /home/terraform
   fi
   if [ -w /etc/shadow ]; then
     grep -v terraform /etc/shadow > /tmp/shadow
-    if [ -z "TERRAFORM_PASSWORD" ]; then
+    if [ -z "$TERRAFORM_PASSWORD" ]; then
       TERRAFORM_PASSWORD=$(date|md5sum|cut -b0-12)
       echo "Generated random password: $TERRAFORM_PASSWORD as TERRAFORM_PASSWORD not specified"
     fi
     cat /tmp/shadow > /etc/shadow
     echo "terraform:$(mkpasswd $TERRAFORM_PASSWORD)::0:::::" >> /etc/shadow
+    # now not GID_0 anymore :)
   fi
   [ -d "$HOME/.sshd" ] || mkdir "$HOME/.sshd"
   [ -f "$HOME/.sshd/sshd_rsa_key" ] || ssh-keygen -t rsa -f "$HOME/.sshd/sshd_rsa_key" -N ''
