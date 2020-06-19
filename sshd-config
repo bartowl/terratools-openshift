@@ -1,5 +1,5 @@
 Protocol 2
-Port 2222
+Port 22
 HostKey /home/terraform/.sshd/sshd_rsa_key
 PidFile /home/terraform/.sshd/sshd.pid
 AcceptEnv LANG LC_*
