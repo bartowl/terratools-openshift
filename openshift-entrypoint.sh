@@ -4,15 +4,22 @@
 
 if ! whoami &> /dev/null; then
   if [ -w /etc/passwd ]; then
-    sed "s/:12345:/:$(id -u):/" /etc/passwd > /tmp/passwd.tmp
-    cat /tmp/passwd.tmp > /etc/passwd
-    rm /tmp/passwd.tmp
+    sed "s/:12345:/:$(id -u):/" /etc/passwd > /tmp/passwd
+    cat /tmp/passwd > /etc/passwd
+    rm /tmp/passwd
     [ "$HOME" = "/" ] && HOME="/home/terraform" && export HOME
-    chown -R "$(id -u)" "$HOME"
+  fi
+  if [ -w /etc/shadow ]; then
+    grep -v terraform /etc/shadow > /tmp/shadow
+    if [ -z "TERRAFORM_PASSWORD" ]; then
+      TERRAFORM_PASSWORD=$(date|md5sum|cut -b0-12)
+      echo "Generated random password: $TERRAFORM_PASSWORD as TERRAFORM_PASSWORD not specified"
+    fi
+    cat /tmp/shadow > /etc/shadow
+    echo "terraform:$(mkpasswd $TERRAFORM_PASSWORD)::0:::::" >> /etc/shadow
   fi
   [ -d "$HOME/.sshd" ] || mkdir "$HOME/.sshd"
   [ -f "$HOME/.sshd/sshd_rsa_key" ] || ssh-keygen -t rsa -f "$HOME/.sshd/sshd_rsa_key" -N ''
-  echo "${TERRAFORM_PASSWORD:-terraform}" | passwd --stdin terraform
 
 fi
 exec "$@"
