@@ -8,5 +8,7 @@ if ! whoami &> /dev/null; then
   fi
   [ -d "$HOME/.sshd" ] || mkdir "$HOME/.sshd"
   [ -f "$HOME/.sshd/sshd_rsa_key" ] || ssh-keygen -t rsa -f "$HOME/.sshd/sshd_rsa_key" -N ''
+  echo "${TERRAFORM_PASSWORD:-terraform}" | passwd --stdin terraform
+
 fi
 exec "$@"
